@@ -17,6 +17,7 @@ import io.moyuru.timetablelayout.BuildConfig
 import io.moyuru.timetablelayout.adapterPosition
 import io.moyuru.timetablelayout.getOrPut
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -239,7 +240,11 @@ class TimetableLayoutManager(
 
     val rightView = findRightView() ?: return 0
     val leftView = findLeftView() ?: return 0
-    val actualDx = calculateHorizontallyScrollAmount(dx, getDecoratedLeft(leftView), getDecoratedRight(rightView))
+
+    // スクロール量制限
+    var actualDx = calculateHorizontallyScrollAmountLimit(dx, getDecoratedLeft(leftView), getDecoratedRight(rightView))
+    println("actualDx=$actualDx")
+
     if (actualDx == 0) return 0
     offsetChildrenHorizontal(-actualDx)
     if (actualDx > 0) {
@@ -289,8 +294,22 @@ class TimetableLayoutManager(
     }
   }
 
+  /** スクロール上限値(カラム2つ分くらい目処) */
+  val LIMIT_DX = 300
+
   /** 無限スクロール可否 */
   val ALLOW_SCROLL_INIFINIY = true
+
+  /**
+   * 移動量計算(上限値つき)
+   */
+  private fun calculateHorizontallyScrollAmountLimit(dx: Int, left: Int, right: Int): Int {
+    var calculatedDx = calculateHorizontallyScrollAmount(dx, left, right)
+    println("calculatedDx=$calculatedDx")
+    var absDx = abs(calculatedDx)
+    absDx = if (absDx > LIMIT_DX) LIMIT_DX else absDx
+    return if(calculatedDx > 0) absDx else (absDx * -1)
+  }
   private fun calculateHorizontallyScrollAmount(dx: Int, left: Int, right: Int): Int {
     // 無限スクロール
     if(ALLOW_SCROLL_INIFINIY) {
