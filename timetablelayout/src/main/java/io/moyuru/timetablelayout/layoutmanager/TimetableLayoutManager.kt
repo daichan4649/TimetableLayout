@@ -289,8 +289,13 @@ class TimetableLayoutManager(
     }
   }
 
+  /** 無限スクロール可否 */
+  val ALLOW_SCROLL_INIFINIY = true
   private fun calculateHorizontallyScrollAmount(dx: Int, left: Int, right: Int): Int {
-    if (!anchor.leftColumn.isFirstColumn() || !anchor.rightColumn.isLastColumn()) return dx
+    // 無限スクロール
+    if(ALLOW_SCROLL_INIFINIY) {
+      if (!anchor.leftColumn.isFirstColumn() || !anchor.rightColumn.isLastColumn()) return dx
+    }
 
     return if (dx > 0) {
       if (anchor.rightColumn.isLastColumn())
