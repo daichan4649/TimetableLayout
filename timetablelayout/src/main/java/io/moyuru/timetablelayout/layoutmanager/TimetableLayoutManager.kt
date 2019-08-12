@@ -310,6 +310,13 @@ class TimetableLayoutManager(
     absDx = if (absDx > LIMIT_DX) LIMIT_DX else absDx
     return if(calculatedDx > 0) absDx else (absDx * -1)
   }
+
+  /**
+   * 移動量計算
+   * dx: 移動量(x軸)
+   * left: 表示上の画面左端カラム位置
+   * right: 表示上の画面右端カラム位置
+   */
   private fun calculateHorizontallyScrollAmount(dx: Int, left: Int, right: Int): Int {
     // 無限スクロール
     if(ALLOW_SCROLL_INIFINIY) {
